@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoEmpire - Simulador de Negocios</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- PANTALLA DE INICIO -->
+        <div id="startScreen" class="screen active">
+            <div class="start-container">
+                <div class="start-header">
+                    <h1 class="game-title">💎 CRYPTOEMPIRE</h1>
+                    <p class="game-subtitle">Tu camino hacia la riqueza empieza aquí</p>
+                </div>
+                <div class="start-content">
+                    <div class="start-hero"></div>
+                    <div class="start-form">
+                        <div class="form-group">
+                            <label for="playerName">Tu Nombre:</label>
+                            <input type="text" id="playerName" placeholder="Ingresa tu nombre" maxlength="20">
+                        </div>
+                        <div class="form-group">
+                            <label for="difficulty">Dificultad:</label>
+                            <select id="difficulty">
+                                <option value="easy">Fácil - $50,000 iniciales</option>
+                                <option value="normal" selected>Normal - $25,000 iniciales</option>
+                                <option value="hard">Difícil - $10,000 iniciales</option>
+                                <option value="extreme">Extremo - $5,000 iniciales</option>
+                            </select>
+                        </div>
+                        <button id="startBtn" class="btn btn-primary">Comenzar Aventura</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANTALLA PRINCIPAL DEL JUEGO -->
+        <div id="gameScreen" class="screen">
+            <!-- HEADER/NAVBAR -->
+            <div class="navbar">
+                <div class="navbar-left">
+                    <h2 class="game-name">💎 CRYPTOEMPIRE</h2>
+                    <span class="player-info" id="playerInfo">Player</span>
+                </div>
+                <div class="navbar-center">
+                    <div class="time-display">
+                        <span id="gameTime">Día 1</span>
+                        <span id="gameSpeed">x1</span>
+                    </div>
+                </div>
+                <div class="navbar-right">
+                    <div class="money-display">
+                        <span class="label">Efectivo</span>
+                        <span id="money" class="amount">$25,000</span>
+                    </div>
+                    <div class="net-worth-display">
+                        <span class="label">Patrimonio</span>
+                        <span id="netWorth" class="amount">$25,000</span>
+                    </div>
+                    <button id="settingsBtn" class="btn-icon">⚙️</button>
+                </div>
+            </div>
+
+            <!-- NAVEGACIÓN DE TABS -->
+            <div class="tabs-container">
+                <button class="tab-btn active" data-tab="dashboard">📊 Dashboard</button>
+                <button class="tab-btn" data-tab="market">📈 Mercado</button>
+                <button class="tab-btn" data-tab="portfolio">💼 Portafolio</button>
+                <button class="tab-btn" data-tab="properties">🏢 Propiedades</button>
+                <button class="tab-btn" data-tab="business">🏭 Negocio</button>
+                <button class="tab-btn" data-tab="stats">📉 Estadísticas</button>
+            </div>
+
+            <!-- CONTENIDO PRINCIPAL -->
+            <div class="main-content">
+                <!-- TAB: DASHBOARD -->
+                <div class="tab-content active" id="dashboard">
+                    <div class="dashboard-grid">
+                        <!-- Resumen Financiero -->
+                        <div class="card card-large">
+                            <h3>Resumen Financiero</h3>
+                            <div class="financial-summary">
+                                <div class="summary-item">
+                                    <span class="label">Efectivo</span>
+                                    <span id="dashMoney" class="value">$25,000</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="label">Activos</span>
+                                    <span id="dashAssets" class="value">$0</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="label">Propiedades</span>
+                                    <span id="dashProperties" class="value">$0</span>
+                                </div>
+                                <div class="summary-item highlight">
+                                    <span class="label">Total Patrimonio</span>
+                                    <span id="dashTotal" class="value">$25,000</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ganancias/Pérdidas Recientes -->
+                        <div class="card">
+                            <h3>Cambio Neto (Hoy)</h3>
+                            <div class="profit-display" id="profitDisplay">
+                                <span id="profitValue" class="profit-value">+$0</span>
+                                <span id="profitPercent" class="profit-percent">+0%</span>
+                            </div>
+                        </div>
+
+                        <!-- Top Criptos -->
+                        <div class="card">
+                            <h3>Top Activos (Hoy)</h3>
+                            <div id="topAssets" class="top-assets-list">
+                                <!-- Cargado dinámicamente -->
+                            </div>
+                        </div>
+
+                        <!-- Gráfico de Patrimonio -->
+                        <div class="card card-large">
+                            <h3>Evolución del Patrimonio</h3>
+                            <canvas id="wealthChart"></canvas>
+                        </div>
+
+                        <!-- Controles de Velocidad -->
+                        <div class="card">
+                            <h3>⏱️ Velocidad del Juego</h3>
+                            <div class="speed-controls">
+                                <button class="speed-btn" data-speed="1">x1</button>
+                                <button class="speed-btn" data-speed="2">x2</button>
+                                <button class="speed-btn" data-speed="4">x4</button>
+                                <button class="speed-btn" data-speed="8">x8</button>
+                                <button id="pauseBtn" class="speed-btn active">⏸️ Pausar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: MERCADO -->
+                <div class="tab-content" id="market">
+                    <div class="market-container">
+                        <div class="market-header">
+                            <h2>Mercado de Criptomonedas</h2>
+                            <input type="text" id="searchAsset" placeholder="Buscar activo..." class="search-input">
+                        </div>
+                        <div class="assets-grid" id="assetsGrid">
+                            <!-- Cargado dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: PORTAFOLIO -->
+                <div class="tab-content" id="portfolio">
+                    <div class="portfolio-container">
+                        <h2>Mi Portafolio</h2>
+                        <div id="portfolioList" class="portfolio-grid">
+                            <!-- Cargado dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: PROPIEDADES -->
+                <div class="tab-content" id="properties">
+                    <div class="properties-container">
+                        <h2>Mapa de Propiedades</h2>
+                        <div class="map-controls">
+                            <button id="zoomInBtn" class="btn-small">🔍+</button>
+                            <button id="zoomOutBtn" class="btn-small">🔍-</button>
+                            <button id="sortPropertiesBtn" class="btn-small">📊 Ordenar</button>
+                        </div>
+                        <div class="map-container">
+                            <canvas id="propertyMap"></canvas>
+                        </div>
+                        <div id="propertiesList" class="properties-list">
+                            <!-- Cargado dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: NEGOCIO -->
+                <div class="tab-content" id="business">
+                    <div class="business-container">
+                        <h2>Expansión del Negocio</h2>
+                        <div class="business-grid">
+                            <div id="businessItems" class="business-items">
+                                <!-- Cargado dinámicamente -->
+                            </div>
+                            <div class="card business-stats">
+                                <h3>Ingresos Pasivos</h3>
+                                <div id="businessIncomeList">
+                                    <!-- Cargado dinámicamente -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: ESTADÍSTICAS -->
+                <div class="tab-content" id="stats">
+                    <div class="stats-container">
+                        <h2>Estadísticas Detalladas</h2>
+                        <div class="stats-grid">
+                            <div class="card">
+                                <h3>Resumen General</h3>
+                                <div id="generalStats" class="stats-list">
+                                    <!-- Cargado dinámicamente -->
+                                </div>
+                            </div>
+                            <div class="card">
+                                <h3>Logros</h3>
+                                <div id="achievements" class="achievements-list">
+                                    <!-- Cargado dinámicamente -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: SETTINGS -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Configuración</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-group">
+                    <label>
+                        <input type="checkbox" id="soundToggle" checked>
+                        Sonido
+                    </label>
+                    <label>
+                        <input type="checkbox" id="notificationsToggle" checked>
+                        Notificaciones
+                    </label>
+                </div>
+                <button id="resetGameBtn" class="btn btn-danger">🔄 Reiniciar Juego</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: TRADING -->
+    <div id="tradingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="tradingAssetName">Bitcoin</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="trading-container">
+                    <div class="trading-chart">
+                        <canvas id="assetChart"></canvas>
+                    </div>
+                    <div class="trading-info">
+                        <div class="info-item">
+                            <span class="label">Precio Actual:</span>
+                            <span id="currentPrice" class="value">$0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Cambio 24h:</span>
+                            <span id="change24h" class="value">+0%</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Tu Saldo:</span>
+                            <span id="assetBalance" class="value">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="trading-form">
+                    <div class="form-group">
+                        <label>Cantidad:</label>
+                        <input type="number" id="tradeAmount" placeholder="0.00" min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Total:</label>
+                        <span id="tradeTotal" class="value">$0.00</span>
+                    </div>
+                    <button id="buyBtn" class="btn btn-success">💰 Comprar</button>
+                    <button id="sellBtn" class="btn btn-danger">📉 Vender</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: PROPERTY -->
+    <div id="propertyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="propertyName">Propiedad</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="property-details">
+                    <div class="property-image" id="propertyImage"></div>
+                    <div class="property-info">
+                        <div class="info-item">
+                            <span class="label">Ubicación:</span>
+                            <span id="propertyLocation" class="value">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Precio:</span>
+                            <span id="propertyPrice" class="value">$0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Rentabilidad Mensual:</span>
+                            <span id="propertyIncome" class="value">+$0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Estado:</span>
+                            <span id="propertyStatus" class="value">-</span>
+                        </div>
+                    </div>
+                </div>
+                <button id="buyPropertyBtn" class="btn btn-primary">Comprar Propiedad</button>
+                <button id="sellPropertyBtn" class="btn btn-danger" style="display:none;">Vender Propiedad</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICACIONES -->
+    <div id="notificationContainer" class="notifications"></div>
+
+    <script src="game.js"></script>
+</body>
+</html>
